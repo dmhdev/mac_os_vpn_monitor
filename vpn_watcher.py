@@ -1,9 +1,3 @@
-"""
-Script that kills an app if VPN disconnects. For OS X
-By: Dayne Hammes
-Compatibility: Python 3.5+
-"""
-
 import subprocess, time
 
 class VPNWatcher:
