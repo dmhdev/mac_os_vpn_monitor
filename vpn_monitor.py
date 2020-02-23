@@ -2,8 +2,8 @@ import subprocess, time
 
 class VPNWatcher:
 
-    def __init__(self, vpn_name, app_name, vpn_check_interval):
-        self.vpn_name = vpn_name
+    def __init__(self, vpn_connection_name, app_name, vpn_check_interval):
+        self.vpn_connection_name = vpn_connection_name
         self.app_name = app_name
         self.vpn_check_interval = vpn_check_interval
 
@@ -12,7 +12,7 @@ class VPNWatcher:
         Check if VPN is currently running
         """
         proc_check = subprocess.run(["scutil --nc list | grep Connected"],shell=True, stdout=subprocess.PIPE)
-        if (self.vpn_name in str(proc_check.stdout) and 'Connected' in str(proc_check.stdout)):
+        if (self.vpn_connection_name in str(proc_check.stdout) and 'Connected' in str(proc_check.stdout)):
             return True
         else:
             return False
@@ -21,7 +21,7 @@ class VPNWatcher:
         """
         Kills selected App
         """
-        print( '---\n%s VPN Disconnected! Closing %s...' % (self.vpn_name, self.app_name) )
+        print( '---\n%s VPN Disconnected! Closing %s...' % (self.vpn_connection_name, self.app_name) )
         subprocess.run([" osascript -e 'quit app \"%s\"' " % self.app_name],shell=True)
         print('%s Closed!\n---' % self.app_name)
 
@@ -31,10 +31,10 @@ class VPNWatcher:
         """
         for reconnect_try in range(1,11):
             print('Attempt %d to reconnect VPN...' % reconnect_try)
-            subprocess.run([ "networksetup -connectpppoeservice \"%s\" " % self.vpn_name],shell=True)
+            subprocess.run([ "networksetup -connectpppoeservice \"%s\" " % self.vpn_connection_name],shell=True)
             time.sleep(10)
             if self.vpn_active():
-                print('%s VPN Restarted...\n---' % self.vpn_name)
+                print('%s VPN Restarted...\n---' % self.vpn_connection_name)
                 return True
         return False
 
@@ -80,6 +80,7 @@ class VPNWatcher:
 if __name__ == "__main__":
     vpn_connection_name = 'VPN Connection Name'
     app_name = 'App Name'
+    vpn_check_interval = 10
     
-    vpn_watcher = VPNWatcher(vpn_connection_name, app_name, 10)
+    vpn_watcher = VPNWatcher(vpn_connection_name, app_name, vpn_check_interval)
     vpn_watcher.watch_vpn()
