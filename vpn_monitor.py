@@ -1,6 +1,6 @@
 import subprocess, time
 
-class VPNWatcher:
+class VPNMonitor:
 
     def __init__(self, vpn_connection_name, app_name, vpn_check_interval):
         self.vpn_connection_name = vpn_connection_name
@@ -8,7 +8,7 @@ class VPNWatcher:
         self.vpn_check_interval = vpn_check_interval
         
  
-    def watch_vpn(self):
+    def monitor_vpn(self):
         """
         Start VPN if inactive, and close App if VPN disconnects
         """
@@ -83,5 +83,5 @@ if __name__ == "__main__":
     app_name = 'App Name'
     vpn_check_interval = 10
     
-    vpn_watcher = VPNWatcher(vpn_connection_name, app_name, vpn_check_interval)
-    vpn_watcher.watch_vpn()
+    vpn_monitor = VPNMonitor(vpn_connection_name, app_name, vpn_check_interval)
+    vpn_monitor.monitor_vpn()
