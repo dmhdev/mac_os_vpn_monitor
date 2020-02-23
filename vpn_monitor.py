@@ -6,46 +6,8 @@ class VPNWatcher:
         self.vpn_connection_name = vpn_connection_name
         self.app_name = app_name
         self.vpn_check_interval = vpn_check_interval
-
-    def vpn_active(self):
-        """
-        Check if VPN is currently running
-        """
-        proc_check = subprocess.run(["scutil --nc list | grep Connected"],shell=True, stdout=subprocess.PIPE)
-        if (self.vpn_connection_name in str(proc_check.stdout) and 'Connected' in str(proc_check.stdout)):
-            return True
-        else:
-            return False
-
-    def kill_app(self):
-        """
-        Kills selected App
-        """
-        print( '---\n%s VPN Disconnected! Closing %s...' % (self.vpn_connection_name, self.app_name) )
-        subprocess.run([" osascript -e 'quit app \"%s\"' " % self.app_name],shell=True)
-        print('%s Closed!\n---' % self.app_name)
-
-    def reconnect_vpn(self):
-        """
-        Try to reconnect VPN 10 times
-        """
-        for reconnect_try in range(1,11):
-            print('Attempt %d to reconnect VPN...' % reconnect_try)
-            subprocess.run([ "networksetup -connectpppoeservice \"%s\" " % self.vpn_connection_name],shell=True)
-            time.sleep(10)
-            if self.vpn_active():
-                print('%s VPN Restarted...\n---' % self.vpn_connection_name)
-                return True
-        return False
-
-    def start_app(self):
-        """
-        Try to restart App
-        """
-        print('Restarting App %s...' % self.app_name)
-        subprocess.run([ "open -a %s" % self.app_name],shell=True)
-        print('%s Restarted!\n---' % self.app_name)
-
+        
+ 
     def watch_vpn(self):
         """
         Start VPN if inactive, and close App if VPN disconnects
@@ -69,7 +31,7 @@ class VPNWatcher:
 
                 # Try to reconnect VPN
                 if self.reconnect_vpn():
-                    self.start_app()
+                    self.restart_app()
                 else:
                     connection_failures += 1
                 # @todo: check if app is restarted successfully
@@ -77,6 +39,45 @@ class VPNWatcher:
             time.sleep(self.vpn_check_interval)
 
 
+    def vpn_active(self):
+        """
+        Check if VPN is currently running
+        """
+        proc_check = subprocess.run(["scutil --nc list | grep Connected"],shell=True, stdout=subprocess.PIPE)
+        if (self.vpn_connection_name in str(proc_check.stdout) and 'Connected' in str(proc_check.stdout)):
+            return True
+        return False
+
+    def kill_app(self):
+        """
+        Kills selected App
+        """
+        print( '---\n%s VPN Disconnected! Closing %s...' % (self.vpn_connection_name, self.app_name) )
+        subprocess.run([" osascript -e 'quit app \"%s\"' " % self.app_name],shell=True)
+        print('%s Closed!\n---' % self.app_name)
+
+    def restart_app(self):
+        """
+        Try to restart App
+        """
+        print('Restarting App %s...' % self.app_name)
+        subprocess.run([ "open -a %s" % self.app_name],shell=True)
+        print('%s Restarted!\n---' % self.app_name)
+        
+    def reconnect_vpn(self):
+        """
+        Try to reconnect VPN 10 times
+        """
+        for reconnect_try in range(1,11):
+            print('Attempt %d to reconnect VPN...' % reconnect_try)
+            subprocess.run([ "networksetup -connectpppoeservice \"%s\" " % self.vpn_connection_name],shell=True)
+            time.sleep(10)
+            if self.vpn_active():
+                print('%s VPN Restarted...\n---' % self.vpn_connection_name)
+                return True
+        return False
+        
+        
 if __name__ == "__main__":
     vpn_connection_name = 'VPN Connection Name'
     app_name = 'App Name'
