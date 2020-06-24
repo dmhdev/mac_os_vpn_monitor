@@ -1,4 +1,4 @@
-import subprocess, time
+import sys, subprocess, time
 
 class VPNMonitor:
 
@@ -6,8 +6,8 @@ class VPNMonitor:
         self.vpn_connection_name = vpn_connection_name
         self.app_name = app_name
         self.vpn_check_interval = vpn_check_interval
-        
- 
+
+
     def monitor_vpn(self):
         """
         Start VPN if inactive, and close App if VPN disconnects
@@ -22,7 +22,7 @@ class VPNMonitor:
             if self.vpn_active(): # @todo: also check if app is running
                 # VPN is running
                 if vpn_check_count % 10 == 0:
-                    print('%s VPN Running...' % self.vpn_name)
+                    print('%s VPN Running...' % self.vpn_connection_name)
                 vpn_check_count += 1
 
             else:
@@ -63,7 +63,7 @@ class VPNMonitor:
         print('Restarting App %s...' % self.app_name)
         subprocess.run([ "open -a %s" % self.app_name],shell=True)
         print('%s Restarted!\n---' % self.app_name)
-        
+
     def reconnect_vpn(self):
         """
         Try to reconnect VPN 10 times
@@ -76,12 +76,12 @@ class VPNMonitor:
                 print('%s VPN Restarted...\n---' % self.vpn_connection_name)
                 return True
         return False
-        
-        
+
+
 if __name__ == "__main__":
-    vpn_connection_name = 'VPN Connection Name'
-    app_name = 'App Name'
+    vpn_connection_name = sys.argv[1]
+    app_name = sys.argv[2]
     vpn_check_interval = 10
-    
+
     vpn_monitor = VPNMonitor(vpn_connection_name, app_name, vpn_check_interval)
     vpn_monitor.monitor_vpn()
