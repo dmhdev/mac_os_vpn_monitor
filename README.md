@@ -1,5 +1,5 @@
 # Mac OS VPN Monitor
-Mac OS script that pairs VPN connection with an App, monitors and keeps the App running if the VPN is connected.
+Command line script for Mac OS that pairs a VPN connection with an App. It monitors and disconnects the App if VPN is disconnected, then automatically attempts to reconnect VPN before restarting the App. 
 
 Usage:
 
