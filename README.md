@@ -3,4 +3,4 @@ Command line script for Mac OS that pairs a VPN connection with an App. It monit
 
 Usage:
 
-~$ python vpn_monitor.py my_vpn_connection_name my_app_name
+~$ python vpn_monitor.py **vpn_connection_name** *app_name*
